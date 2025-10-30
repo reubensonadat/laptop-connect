@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Search, Filter, Loader2 } from 'lucide-react';
 import { laptopService } from '../services/laptopService';
 import { Laptop, Filters } from '../types';
@@ -18,7 +19,7 @@ const Home = () => {
     ram: '',
     storage: '',
     condition: '',
-    priceRange: [0, 12000], // Increased max price
+    priceRange: [0, 12000],
     searchTerm: ''
   });
 
@@ -92,7 +93,7 @@ const Home = () => {
       ram: '',
       storage: '',
       condition: '',
-      priceRange: [0, 12000], // Increased max price
+      priceRange: [0, 12000],
       searchTerm: ''
     });
   };
@@ -105,102 +106,123 @@ const Home = () => {
     setSelectedLaptop(null);
   };
 
+  // Get unique brands for SEO keywords
+  const uniqueBrands = [...new Set(laptops.map(laptop => laptop.brand))].join(', ');
+
   return (
-    <div className="container px-4 py-8 md:px-6">
-      {/* Hero Section */}
-      <section className="mb-12 text-center">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">
-          Find Your Perfect Laptop
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-          Discover laptops tailored to your academic needs with our intelligent recommendation system
-        </p>
-        
-        {/* Search Bar */}
-        <div className="relative max-w-md mx-auto mb-6">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <input
-            type="text"
-            placeholder="Search by brand, model, or processor..."
-            className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            value={filters.searchTerm}
-            onChange={(e) => handleFilterChange({ searchTerm: e.target.value })}
-          />
-        </div>
-        
-        {/* Filter Toggle Button */}
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="inline-flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted transition-colors"
-        >
-          <Filter className="h-4 w-4" />
-          {showFilters ? 'Hide Filters' : 'Show Filters'}
-        </button>
-      </section>
+    <>
+      <Helmet>
+        <title>Laptop Connect - Find Your Perfect Laptop in Ghana</title>
+        <meta name="description" content={`Discover laptops from top brands like ${uniqueBrands} tailored to your academic needs. Shop from a wide selection of new and used laptops at competitive prices in Ghana.`} />
+        <meta name="keywords" content={`laptops, computer, ${uniqueBrands.toLowerCase()}, gaming laptops, student laptops, laptop ghana, laptop accra, dell ghana, hp ghana, lenovo ghana`} />
+        <link rel="canonical" href="https://laptopconnect.com" />
+        <meta property="og:title" content="Laptop Connect - Find Your Perfect Laptop in Ghana" />
+        <meta property="og:description" content={`Discover laptops from top brands like ${uniqueBrands} tailored to your academic needs.`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://laptopconnect.com" />
+        <meta property="og:image" content="/logo.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Laptop Connect - Find Your Perfect Laptop in Ghana" />
+        <meta name="twitter:description" content={`Discover laptops from top brands like ${uniqueBrands} tailored to your academic needs.`} />
+        <meta name="twitter:image" content="/logo.png" />
+      </Helmet>
+      
+      <div className="container px-4 py-8 md:px-6">
+        {/* Hero Section */}
+        <section className="mb-12 text-center">
+          <h1 className="text-4xl font-bold tracking-tight mb-4">
+            Find Your Perfect Laptop
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+            Discover laptops tailored to your academic needs with our intelligent recommendation system
+          </p>
+          
+          {/* Search Bar */}
+          <div className="relative max-w-md mx-auto mb-6">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <input
+              type="text"
+              placeholder="Search by brand, model, or processor..."
+              className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              value={filters.searchTerm}
+              onChange={(e) => handleFilterChange({ searchTerm: e.target.value })}
+            />
+          </div>
+          
+          {/* Filter Toggle Button */}
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="inline-flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted transition-colors"
+          >
+            <Filter className="h-4 w-4" />
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
+          </button>
+        </section>
 
-      {/* Course Recommendation Section */}
-      <section className="mb-12">
-        <CourseRecommendation 
-          laptops={laptops} 
-          onLaptopSelect={openLaptopModal}
-        />
-      </section>
-
-      {/* Filters Section */}
-      {showFilters && (
-        <section className="mb-8">
-          <SearchFilter 
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onClearFilters={clearFilters}
+        {/* Course Recommendation Section */}
+        <section className="mb-12">
+          <CourseRecommendation 
+            laptops={laptops} 
+            onLaptopSelect={openLaptopModal}
           />
         </section>
-      )}
 
-      {/* Results Count */}
-      <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">
-          Available Laptops ({filteredLaptops.length})
-        </h2>
-      </div>
-
-      {/* Laptops Grid */}
-      {loading ? (
-        <div className="flex justify-center items-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      ) : filteredLaptops.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredLaptops.map(laptop => (
-            <LaptopCard 
-              key={laptop.id} 
-              laptop={laptop} 
-              onClick={() => openLaptopModal(laptop)} 
+        {/* Filters Section */}
+        {showFilters && (
+          <section className="mb-8">
+            <SearchFilter 
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              onClearFilters={clearFilters}
             />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-lg text-muted-foreground">
-            No laptops found matching your criteria.
-          </p>
-          <button 
-            onClick={clearFilters}
-            className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-          >
-            Clear Filters
-          </button>
-        </div>
-      )}
+          </section>
+        )}
 
-      {/* Laptop Detail Modal */}
-      {selectedLaptop && (
-        <LaptopModal 
-          laptop={selectedLaptop} 
-          onClose={closeModal} 
-        />
-      )}
-    </div>
+        {/* Results Count */}
+        <div className="mb-6 flex justify-between items-center">
+          <h2 className="text-2xl font-semibold">
+            Available Laptops ({filteredLaptops.length})
+          </h2>
+        </div>
+
+        {/* Laptops Grid */}
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : filteredLaptops.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredLaptops.map(laptop => (
+              <LaptopCard 
+                key={laptop.id} 
+                laptop={laptop} 
+                onClick={() => openLaptopModal(laptop)} 
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-lg text-muted-foreground">
+              No laptops found matching your criteria.
+            </p>
+            <button 
+              onClick={clearFilters}
+              className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+            >
+              Clear Filters
+            </button>
+          </div>
+        )}
+
+        {/* Laptop Detail Modal */}
+        {selectedLaptop && (
+          <LaptopModal 
+            laptop={selectedLaptop} 
+            onClose={closeModal} 
+          />
+        )}
+      </div>
+    </>
   );
 };
 

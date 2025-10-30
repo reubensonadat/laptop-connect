@@ -52,7 +52,7 @@ const LaptopCard: React.FC<LaptopCardProps> = ({ laptop, onClick }) => {
         {imageUrl && !imageError ? (
           <img 
             src={imageUrl} 
-            alt={`${laptop.brand} ${laptop.model}`}
+            alt={`${laptop.brand} ${laptop.model} laptop with ${laptop.processor}, ${laptop.ram} RAM, ${laptop.storage} - ${laptop.condition} condition`}
             className="w-full h-full object-cover"
             onError={handleImageError}
             loading="lazy"

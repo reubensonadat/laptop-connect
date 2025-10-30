@@ -1,3 +1,4 @@
+// src/components/SEO.tsx
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
@@ -11,27 +12,21 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({
-  title = 'Laptop Connect - Find Your Perfect Laptop in Ghana',
-  description = 'Find the perfect laptop for your course with our intelligent recommendation system. Quality laptops at affordable prices in Ghana with flexible payment options.',
-  keywords = 'laptops, Ghana, student laptops, course recommendations, Dell, HP, Lenovo, MacBook, affordable laptops, laptop shop, Accra',
-  image = '/og-image.jpg',
+  title = 'Laptop Connect - Find Your Perfect Laptop',
+  description = 'Discover laptops tailored to your academic needs with our intelligent recommendation system. Shop from a wide selection of new and used laptops at competitive prices.',
+  keywords = 'laptops, computer, dell, hp, lenovo, apple, macbook, gaming laptops, student laptops, laptop ghana',
+  image = '/logo.png',
   url = window.location.href,
   type = 'website'
 }) => {
   return (
     <Helmet>
-      {/* Title */}
+      {/* Standard Meta Tags */}
       <title>{title}</title>
-      <meta name="title" content={title} />
-      
-      {/* Description */}
       <meta name="description" content={description} />
-      
-      {/* Keywords */}
       <meta name="keywords" content={keywords} />
-      
-      {/* Canonical URL */}
-      <link rel="canonical" href={url} />
+      <meta name="author" content="Laptop Connect" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
@@ -39,8 +34,6 @@ const SEO: React.FC<SEOProps> = ({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
       
       {/* Twitter */}
       <meta property="twitter:card" content="summary_large_image" />
@@ -48,6 +41,11 @@ const SEO: React.FC<SEOProps> = ({
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />
       <meta property="twitter:image" content={image} />
+      
+      {/* Additional SEO */}
+      <html lang="en" />
+      <meta name="robots" content="index, follow" />
+      <link rel="canonical" href={url} />
     </Helmet>
   );
 };
