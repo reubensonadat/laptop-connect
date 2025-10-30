@@ -18,7 +18,7 @@ const Home = () => {
     ram: '',
     storage: '',
     condition: '',
-    priceRange: [0, 10000],
+    priceRange: [0, 12000], // Increased max price
     searchTerm: ''
   });
 
@@ -40,7 +40,7 @@ const Home = () => {
 
   useEffect(() => {
     // Apply filters whenever they change
-    let result = laptops;
+    let result = [...laptops];
 
     // Filter by search term
     if (filters.searchTerm) {
@@ -48,7 +48,8 @@ const Home = () => {
       result = result.filter(laptop => 
         laptop.brand.toLowerCase().includes(searchLower) ||
         laptop.model.toLowerCase().includes(searchLower) ||
-        laptop.processor.toLowerCase().includes(searchLower)
+        laptop.processor.toLowerCase().includes(searchLower) ||
+        (laptop.description && laptop.description.toLowerCase().includes(searchLower))
       );
     }
 
@@ -57,17 +58,17 @@ const Home = () => {
       result = result.filter(laptop => laptop.brand === filters.brand);
     }
 
-    // Filter by RAM
+    // Filter by RAM - exact match
     if (filters.ram) {
       result = result.filter(laptop => laptop.ram === filters.ram);
     }
 
-    // Filter by storage type
+    // Filter by storage type - check if storage contains the selected type
     if (filters.storage) {
       result = result.filter(laptop => laptop.storage.includes(filters.storage));
     }
 
-    // Filter by condition
+    // Filter by condition - exact match
     if (filters.condition) {
       result = result.filter(laptop => laptop.condition === filters.condition);
     }
@@ -91,7 +92,7 @@ const Home = () => {
       ram: '',
       storage: '',
       condition: '',
-      priceRange: [0, 10000],
+      priceRange: [0, 12000], // Increased max price
       searchTerm: ''
     });
   };

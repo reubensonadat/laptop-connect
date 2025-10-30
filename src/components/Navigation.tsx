@@ -63,6 +63,12 @@ const Navigation = () => {
           >
             Terms
           </Link>
+          <Link 
+              to="/privacy" 
+              className={`font-medium transition-colors hover:text-primary ${isActive('/privacy') ? 'text-primary' : 'text-muted-foreground'}`}
+            >
+              Privacy
+            </Link>
         </nav>
         
         {/* Mobile Menu Button */}
@@ -114,6 +120,12 @@ const Navigation = () => {
           >
             Terms
           </Link>
+          <Link 
+              to="/privacy" 
+              className={`font-medium transition-colors hover:text-primary ${isActive('/privacy') ? 'text-primary' : 'text-muted-foreground'}`}
+            >
+              Privacy
+            </Link>
           </nav>
         </div>
       )}

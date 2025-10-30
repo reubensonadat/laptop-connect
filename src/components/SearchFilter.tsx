@@ -13,10 +13,17 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
   onFilterChange, 
   onClearFilters 
 }) => {
-  const brands = ['HP', 'Dell', 'Lenovo', 'Apple', 'ASUS', 'Acer', 'MSI', 'Microsoft'];
-  const ramOptions = ['4GB', '8GB', '16GB', '32GB'];
+  // Extract unique brands from your database
+  const brands = ['HP', 'Dell', 'Lenovo', 'Apple', 'Acer', 'Microsoft'];
+  
+  // RAM options matching your database format
+  const ramOptions = ['4 GB','8 GB', '12 GB', '16 GB', '32 GB','64 GB/54 GB'];
+  
+  // Storage options matching your database format
   const storageOptions = ['SSD', 'HDD'];
-  const conditionOptions = ['New', 'Used'];
+  
+  // Condition options matching your database format
+  const conditionOptions = ['NEW', 'UK USED', 'LOCAL USED'];
 
   const handlePriceRangeChange = (index: number, value: number) => {
     const newPriceRange = [...filters.priceRange] as [number, number];
@@ -109,7 +116,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
               <input 
                 type="range" 
                 min="0" 
-                max="10000" 
+                max="12000" 
                 step="500"
                 value={filters.priceRange[0]}
                 onChange={(e) => handlePriceRangeChange(0, Number(e.target.value))}
@@ -121,7 +128,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
               <input 
                 type="range" 
                 min="0" 
-                max="10000" 
+                max="12000" 
                 step="500"
                 value={filters.priceRange[1]}
                 onChange={(e) => handlePriceRangeChange(1, Number(e.target.value))}

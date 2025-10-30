@@ -377,5 +377,4 @@ Check this README for common solutions
 Search existing issues on GitHub
 Create a new issue with detailed information
 Contact us at laptopconnect@gmail.com
-Thank you for using Laptop Connect! We hope this application helps you find the perfect laptop for your needs.#   l a p t o p - c o n n e c t  
- 
+Thank you for using Laptop Connect! We hope this application helps you find the perfect laptop for your needs.
