@@ -1,9 +1,25 @@
 // src/components/PaymentForm.tsx
 import React, { useState } from 'react';
-import { CreditCard, User, Mail, Phone, MapPin, FileText, Check, ExternalLink, X } from 'lucide-react';
+import { CreditCard, User, Mail, Phone, MapPin, FileText, Check, ExternalLink, X, Navigation, RefreshCw, AlertCircle } from 'lucide-react';
 import { Laptop, BuyerInfo } from '../types';
 import { toast } from 'sonner';
 import { initializePayment, generateReference } from '../services/simplePaymentService';
+
+// Enhanced BuyerInfo type with accuracy information
+interface BuyerInfo {
+  name: string;
+  email: string;
+  phone: string;
+  deliveryLocation: string;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+    accuracy: number; // in meters
+    timestamp: number;
+  };
+  notes: string;
+  agreedToTerms: boolean;
+}
 
 interface PaymentFormProps {
   laptop: Laptop;
@@ -30,6 +46,10 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [paymentSuccessful, setPaymentSuccessful] = useState(false);
   const [paymentData, setPaymentData] = useState<any>(null);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [useCoordinates, setUseCoordinates] = useState(false);
+  const [locationAttempts, setLocationAttempts] = useState(0);
+  const [locationQuality, setLocationQuality] = useState<'high' | 'medium' | 'low' | null>(null);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-GH', {
@@ -47,6 +67,172 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       setBuyerInfo(prev => ({ ...prev, [name]: checked }));
     } else {
       setBuyerInfo(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const getHighAccuracyLocation = (): Promise<GeolocationPosition> => {
+    return new Promise((resolve, reject) => {
+      const options = {
+        enableHighAccuracy: true, // Use GPS if available
+        timeout: 15000, // 15 seconds timeout
+        maximumAge: 0 // Don't use cached position
+      };
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => resolve(position),
+        (error) => reject(error),
+        options
+      );
+    });
+  };
+
+  const watchHighAccuracyLocation = (): Promise<GeolocationPosition> => {
+    return new Promise((resolve, reject) => {
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0
+      };
+
+      let watchId: number;
+      let bestAccuracy = Infinity;
+      let bestPosition: GeolocationPosition | null = null;
+      let attempts = 0;
+      const maxAttempts = 5;
+
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          attempts++;
+          const accuracy = position.coords.accuracy;
+          
+          if (accuracy < bestAccuracy) {
+            bestAccuracy = accuracy;
+            bestPosition = position;
+          }
+
+          // If we get good accuracy or max attempts, resolve
+          if (accuracy <= 10 || attempts >= maxAttempts) {
+            navigator.geolocation.clearWatch(watchId);
+            if (bestPosition) {
+              resolve(bestPosition);
+            } else {
+              reject(new Error('Could not get accurate location'));
+            }
+          }
+        },
+        (error) => {
+          navigator.geolocation.clearWatch(watchId);
+          reject(error);
+        },
+        options
+      );
+
+      // Fallback timeout
+      setTimeout(() => {
+        navigator.geolocation.clearWatch(watchId);
+        if (bestPosition) {
+          resolve(bestPosition);
+        } else {
+          reject(new Error('Location request timed out'));
+        }
+      }, 20000);
+    });
+  };
+
+  const getLocation = async (isRetry = false) => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser');
+      return;
+    }
+
+    setIsGettingLocation(true);
+    setLocationAttempts(prev => prev + 1);
+
+    try {
+      // First try high accuracy
+      let position = await getHighAccuracyLocation();
+      
+      // If accuracy is poor and it's not a retry, try watching for better accuracy
+      if (position.coords.accuracy > 20 && !isRetry) {
+        try {
+          position = await watchHighAccuracyLocation();
+        } catch (watchError) {
+          console.log('Watch position failed, using initial position');
+        }
+      }
+
+      const { latitude, longitude, accuracy } = position.coords;
+      
+      // Determine location quality
+      let quality: 'high' | 'medium' | 'low';
+      if (accuracy <= 10) {
+        quality = 'high';
+      } else if (accuracy <= 50) {
+        quality = 'medium';
+      } else {
+        quality = 'low';
+      }
+      
+      setLocationQuality(quality);
+      
+      setBuyerInfo(prev => ({
+        ...prev,
+        coordinates: { 
+          latitude, 
+          longitude, 
+          accuracy,
+          timestamp: Date.now()
+        },
+        deliveryLocation: `Lat: ${latitude.toFixed(6)}, Lng: ${longitude.toFixed(6)} (±${Math.round(accuracy)}m)`
+      }));
+      
+      setUseCoordinates(true);
+      
+      // Show appropriate message based on accuracy
+      if (quality === 'high') {
+        toast.success(`High accuracy location captured! (±${Math.round(accuracy)}m)`);
+      } else if (quality === 'medium') {
+        toast.info(`Location captured with medium accuracy (±${Math.round(accuracy)}m). For better accuracy, ensure GPS is enabled.`);
+      } else {
+        toast.warning(`Location accuracy is low (±${Math.round(accuracy)}m). Consider entering address manually for precise delivery.`);
+      }
+      
+    } catch (error: any) {
+      let errorMessage = 'Failed to get your location';
+      
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage = "Location access denied. Please enable location permissions in your browser settings.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage = "Location information unavailable. Please check your GPS/WiFi connection.";
+          break;
+        case error.TIMEOUT:
+          errorMessage = "Location request timed out. Please try again.";
+          break;
+        default:
+          errorMessage = error.message || "Unknown error occurred while getting location.";
+      }
+      
+      toast.error(errorMessage);
+    } finally {
+      setIsGettingLocation(false);
+    }
+  };
+
+  const toggleLocationInput = () => {
+    setUseCoordinates(!useCoordinates);
+    if (!useCoordinates) {
+      // If switching to coordinates, get the location
+      getLocation();
+    } else {
+      // If switching back to text input, clear coordinates
+      setBuyerInfo(prev => ({
+        ...prev,
+        coordinates: undefined,
+        deliveryLocation: ''
+      }));
+      setLocationQuality(null);
     }
   };
 
@@ -69,6 +255,19 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     if (!buyerInfo.agreedToTerms) {
       toast.error('Please agree to the terms and conditions');
       return false;
+    }
+    
+    // Validate location accuracy if using coordinates
+    if (useCoordinates && buyerInfo.coordinates && buyerInfo.coordinates.accuracy > 100) {
+      const confirmLowAccuracy = window.confirm(
+        `Your location accuracy is quite low (±${Math.round(buyerInfo.coordinates.accuracy)}m). ` +
+        'This might affect delivery precision. Would you like to enter your address manually instead?'
+      );
+      if (confirmLowAccuracy) {
+        setUseCoordinates(false);
+        setBuyerInfo(prev => ({ ...prev, deliveryLocation: '', coordinates: undefined }));
+        return false;
+      }
     }
     
     return true;
@@ -102,8 +301,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             setPaymentData(response);
             setPaymentSuccessful(true);
             
-            // Prepare the message with the additional receipt information
-            const message = `Hello, I've just paid for ${laptop.brand} ${laptop.model} (${paymentType} Payment). Here are my details:\n\nName: ${buyerInfo.name}\nEmail: ${buyerInfo.email}\nPhone: ${buyerInfo.phone}\nDelivery Location: ${buyerInfo.deliveryLocation}\n\nPayment Reference: ${response.reference}\nPayment ID: ${response.transaction}\n\nPlease confirm my purchase \n\nI am about to send a picture of my receipt`;
+            // Prepare the message with location details
+            let locationInfo = buyerInfo.deliveryLocation;
+            if (useCoordinates && buyerInfo.coordinates) {
+              const { latitude, longitude, accuracy } = buyerInfo.coordinates;
+              locationInfo = `GPS Coordinates: ${latitude.toFixed(6)}, ${longitude.toFixed(6)} (Accuracy: ±${Math.round(accuracy)}m)`;
+              
+              // Add Google Maps link for easy navigation
+              const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+              locationInfo += `\nMap: ${mapsUrl}`;
+            }
+            
+            const message = `Hello, I've just paid for ${laptop.brand} ${laptop.model} (${paymentType} Payment). Here are my details:\n\nName: ${buyerInfo.name}\nEmail: ${buyerInfo.email}\nPhone: ${buyerInfo.phone}\nDelivery Location: ${locationInfo}\n\nPayment Reference: ${response.reference}\nPayment ID: ${response.transaction}\n\nPlease confirm my purchase \n\nI am about to send a picture of my receipt`;
             
             // Try to redirect to WhatsApp automatically
             setTimeout(() => {
@@ -155,6 +364,24 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   };
 
   const paymentAmount = paymentType === 'Full' ? laptop.price : laptop.price / 2;
+
+  const getAccuracyColor = (quality: 'high' | 'medium' | 'low' | null) => {
+    switch(quality) {
+      case 'high': return 'text-green-600';
+      case 'medium': return 'text-yellow-600';
+      case 'low': return 'text-red-600';
+      default: return 'text-gray-600';
+    }
+  };
+
+  const getAccuracyIcon = (quality: 'high' | 'medium' | 'low' | null) => {
+    switch(quality) {
+      case 'high': return <Check className="h-3 w-3" />;
+      case 'medium': return <AlertCircle className="h-3 w-3" />;
+      case 'low': return <AlertCircle className="h-3 w-3" />;
+      default: return null;
+    }
+  };
 
   return (
     <>
@@ -237,14 +464,53 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                   <MapPin className="h-3 w-3" />
                   Delivery Location
                 </label>
-                <input
-                  type="text"
-                  name="deliveryLocation"
-                  value={buyerInfo.deliveryLocation}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded-md bg-background"
-                  placeholder="Enter delivery location"
-                />
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      name="deliveryLocation"
+                      value={buyerInfo.deliveryLocation}
+                      onChange={handleInputChange}
+                      className="flex-1 p-2 border rounded-md bg-background"
+                      placeholder={useCoordinates ? "Location captured" : "Enter delivery location"}
+                      disabled={useCoordinates}
+                    />
+                    <button
+                      type="button"
+                      onClick={toggleLocationInput}
+                      className="p-2 border rounded-md bg-primary/10 hover:bg-primary/20 transition-colors"
+                      title={useCoordinates ? "Use text input instead" : "Get my current location"}
+                    >
+                      {isGettingLocation ? (
+                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Navigation className="h-4 w-4 text-primary" />
+                      )}
+                    </button>
+                    {useCoordinates && (
+                      <button
+                        type="button"
+                        onClick={() => getLocation(true)}
+                        className="p-2 border rounded-md bg-blue-50 hover:bg-blue-100 transition-colors"
+                        title="Refresh location"
+                      >
+                        <RefreshCw className="h-4 w-4 text-blue-600" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {useCoordinates && locationQuality && (
+                    <div className={`flex items-center gap-1 text-xs ${getAccuracyColor(locationQuality)}`}>
+                      {getAccuracyIcon(locationQuality)}
+                      <span>
+                        {locationQuality === 'high' && 'High accuracy location (GPS)'}
+                        {locationQuality === 'medium' && 'Medium accuracy location'}
+                        {locationQuality === 'low' && 'Low accuracy - consider manual entry'}
+                        {buyerInfo.coordinates && ` (±${Math.round(buyerInfo.coordinates.accuracy)}m)`}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             
@@ -258,7 +524,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                 value={buyerInfo.notes}
                 onChange={handleInputChange}
                 className="w-full p-2 border rounded-md bg-background"
-                placeholder="Any additional information or requests"
+                placeholder="Any additional information or requests (e.g., landmarks, specific delivery instructions)"
                 rows={3}
               />
             </div>
@@ -337,8 +603,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               </p>
               <button
                 onClick={() => {
-                  // Prepare the message with the additional receipt information
-                  const message = `Hello, I've just paid for ${laptop.brand} ${laptop.model} (${paymentType} Payment). Here are my details:\n\nName: ${buyerInfo.name}\nEmail: ${buyerInfo.email}\nPhone: ${buyerInfo.phone}\nDelivery Location: ${buyerInfo.deliveryLocation}\n\nPayment Reference: ${paymentData?.reference}\nPayment ID: ${paymentData?.transaction}\n\n Please confirm my purchase \n\nI am about to send a picture of my receipt`;
+                  // Prepare the message with location details
+                  let locationInfo = buyerInfo.deliveryLocation;
+                  if (useCoordinates && buyerInfo.coordinates) {
+                    const { latitude, longitude, accuracy } = buyerInfo.coordinates;
+                    locationInfo = `GPS Coordinates: ${latitude.toFixed(6)}, ${longitude.toFixed(6)} (Accuracy: ±${Math.round(accuracy)}m)`;
+                    
+                    // Add Google Maps link for easy navigation
+                    const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                    locationInfo += `\nMap: ${mapsUrl}`;
+                  }
+                  
+                  const message = `Hello, I've just paid for ${laptop.brand} ${laptop.model} (${paymentType} Payment). Here are my details:\n\nName: ${buyerInfo.name}\nEmail: ${buyerInfo.email}\nPhone: ${buyerInfo.phone}\nDelivery Location: ${locationInfo}\n\nPayment Reference: ${paymentData?.reference}\nPayment ID: ${paymentData?.transaction}\n\n Please confirm my purchase \n\nI am about to send a picture of my receipt`;
                   redirectToWhatsApp(message);
                 }}
                 className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
