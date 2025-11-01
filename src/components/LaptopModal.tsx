@@ -1,7 +1,8 @@
+// src/components/LaptopModal.tsx
 import React, { useState } from 'react';
 import { X, Monitor, Cpu, HardDrive, Zap, Check, CreditCard, MessageCircle } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-import { Laptop, BuyerInfo } from '../types';
+import { Laptop } from '../types';
 import PaymentForm from './PaymentForm';
 import { toast } from 'sonner';
 
@@ -80,7 +81,7 @@ const LaptopModal: React.FC<LaptopModalProps> = ({ laptop, onClose }) => {
     },
     "offers": {
       "@type": "Offer",
-      "url": `https://laptopconnect.com/laptop/${laptop.id}`,
+      "url": `https://laptopconnect.store/laptop/${laptop.id}`,
       "priceCurrency": "GHS",
       "price": laptop.price,
       "availability": laptop.availability ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
