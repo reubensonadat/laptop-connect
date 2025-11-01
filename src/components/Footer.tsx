@@ -1,7 +1,7 @@
 // src/components/Footer.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {Facebook, Twitter, Instagram } from 'lucide-react';
+import { Facebook, Twitter, Instagram } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -14,13 +14,13 @@ const Footer = () => {
               Your trusted partner for finding the perfect laptop for your academic needs.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://facebook.com/laptopconnect" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://twitter.com/laptopconnect" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://instagram.com/laptopconnect" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <Instagram className="h-5 w-5" />
               </a>
             </div>
@@ -51,19 +51,19 @@ const Footer = () => {
             <h4 className="text-sm font-semibold">Categories</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/category/business" className="text-muted-foreground hover:text-primary transition-colors">
                   Business Laptops
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/category/gaming" className="text-muted-foreground hover:text-primary transition-colors">
                   Gaming Laptops
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/category/student" className="text-muted-foreground hover:text-primary transition-colors">
                   Student Laptops
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

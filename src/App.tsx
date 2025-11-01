@@ -9,7 +9,6 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
-import './styles/globals.css';
 import Analytics from './components/Analytics';
 import NotFound from './pages/NotFound';
 
