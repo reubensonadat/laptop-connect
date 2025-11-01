@@ -1,3 +1,4 @@
+// src/components/PaymentForm.tsx
 import React, { useState } from 'react';
 import { CreditCard, User, Mail, Phone, MapPin, FileText, Check, ExternalLink, X } from 'lucide-react';
 import { Laptop, BuyerInfo } from '../types';

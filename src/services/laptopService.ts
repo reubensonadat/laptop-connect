@@ -1,7 +1,7 @@
 // services/laptopService.ts
 import { Laptop } from '../types';
 
-// Configuration
+// Keep using your direct Google Sheets URL
 const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQBk9tAiZGPr29OFv4jpD2rxyVd10lufJTvQTs3_-ZG1e7B0P1KoUqrjnOrijjoMCxYqLMRu0Rk71Cx/pub?output=csv';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
@@ -114,6 +114,18 @@ const transformToLaptop = (rawData: RawLaptopData): Laptop => {
   };
 };
 
+// Add this function to laptopService.ts
+const parseImageUrls = (imageUrls: string | undefined): string | string[] | undefined => {
+  if (!imageUrls) return undefined;
+  
+  // If it contains commas, split into an array
+  if (imageUrls.includes(',')) {
+    return imageUrls.split(',').map(url => url.trim());
+  }
+  
+  return imageUrls;
+};
+
 // Fetch data from Google Sheets
 const fetchCSVData = async (): Promise<string> => {
   const response = await fetch(GOOGLE_SHEETS_CSV_URL);
@@ -178,43 +190,5 @@ export const laptopService = {
       console.error('Error refreshing laptops:', error);
       return cachedLaptops || [];
     }
-  },
-
-  // Get laptops filtered by brand
-  getLaptopsByBrand: async (brand: string): Promise<Laptop[]> => {
-    try {
-      const laptops = await laptopService.getLaptops();
-      return laptops.filter(laptop => 
-        laptop.brand.toLowerCase() === brand.toLowerCase()
-      );
-    } catch (error) {
-      console.error(`Error fetching laptops for brand ${brand}:`, error);
-      return [];
-    }
-  },
-
-  // Get laptops within a price range
-  getLaptopsByPriceRange: async (minPrice: number, maxPrice: number): Promise<Laptop[]> => {
-    try {
-      const laptops = await laptopService.getLaptops();
-      return laptops.filter(laptop => 
-        laptop.price >= minPrice && laptop.price <= maxPrice
-      );
-    } catch (error) {
-      console.error(`Error fetching laptops in price range ${minPrice}-${maxPrice}:`, error);
-      return [];
-    }
   }
-};
-
-// Add this function to laptopService.ts
-const parseImageUrls = (imageUrls: string | undefined): string | string[] | undefined => {
-  if (!imageUrls) return undefined;
-  
-  // If it contains commas, split into an array
-  if (imageUrls.includes(',')) {
-    return imageUrls.split(',').map(url => url.trim());
-  }
-  
-  return imageUrls;
 };
