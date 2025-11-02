@@ -1,6 +1,14 @@
+// src/components/PaymentForm.js
+
 import { useState, useEffect } from 'react';
 import { formatPrice } from '../utils/helpers';
 import PaymentService from '../services/paymentService';
+
+// Add this at the top of your PaymentForm component
+useEffect(() => {
+  console.log('Paystack Key:', import.meta.env.VITE_PAYSTACK_PUBLIC_KEY);
+  console.log('WhatsApp Number:', import.meta.env.VITE_WHATSAPP_PHONE_NUMBER);
+}, []);
 
 // Custom WhatsApp message generator
 const generateWhatsAppMessage = (laptop, formData, reference) => {
@@ -15,6 +23,7 @@ const PaymentForm = ({ laptop, onClose, onSuccess }) => {
     deliveryLocation: '',
     additionalNotes: '',
     paymentType: 'full', // 'full' or 'half'
+    acceptTerms: false
   });
   const [errors, setErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
@@ -87,12 +96,26 @@ const PaymentForm = ({ laptop, onClose, onSuccess }) => {
     setIsProcessing(true);
     setPaymentError('');
     
+    // Check if public key is available
+    if (!publicKey) {
+      setPaymentError('Payment service is not configured. Please contact support.');
+      setIsProcessing(false);
+      return;
+    }
+    
     try {
+      const amount = formData.paymentType === 'full' 
+        ? laptop.price * 100 // Paystack expects amount in kobo (cents)
+        : Math.ceil(laptop.price / 2) * 100;
+      
+      console.log('Payment amount:', amount);
+      console.log('Payment currency:', 'GHS');
+      
       const config = {
         key: publicKey,
         email: formData.email,
         amount: amount,
-        currency: 'GHS', // Explicitly set currency to Ghanaian Cedis
+        currency: 'GHS',
         ref: (new Date()).getTime().toString(),
         metadata: {
           custom_fields: [
@@ -110,12 +133,13 @@ const PaymentForm = ({ laptop, onClose, onSuccess }) => {
         }
       };
       
+      console.log('Payment config:', config);
       const response = await PaymentService.initializePayment(config);
       handlePaymentSuccess(response);
     } catch (error) {
       setIsProcessing(false);
-      setPaymentError('Payment failed. Please try again.');
       console.error('Payment error:', error);
+      setPaymentError(`Payment failed: ${error.message || 'Unknown error'}`);
     }
   };
 
@@ -172,8 +196,6 @@ const PaymentForm = ({ laptop, onClose, onSuccess }) => {
   };
 
   // Rest of your component remains the same...
-  // (I'm keeping the rest of the component unchanged to avoid confusion)
-  
   return (
     <div className="space-y-6">
       <div className="flex items-center">
