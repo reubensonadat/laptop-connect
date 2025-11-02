@@ -1,14 +1,8 @@
 // src/components/PaymentForm.js
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatPrice } from '../utils/helpers';
 import PaymentService from '../services/paymentService';
-
-// Add this at the top of your PaymentForm component
-useEffect(() => {
-  console.log('Paystack Key:', import.meta.env.VITE_PAYSTACK_PUBLIC_KEY);
-  console.log('WhatsApp Number:', import.meta.env.VITE_WHATSAPP_PHONE_NUMBER);
-}, []);
 
 // Custom WhatsApp message generator
 const generateWhatsAppMessage = (laptop, formData, reference) => {
@@ -16,6 +10,12 @@ const generateWhatsAppMessage = (laptop, formData, reference) => {
 };
 
 const PaymentForm = ({ laptop, onClose, onSuccess }) => {
+  // Add this useEffect hook inside the component
+  useEffect(() => {
+    console.log('Paystack Key:', import.meta.env.VITE_PAYSTACK_PUBLIC_KEY);
+    console.log('WhatsApp Number:', import.meta.env.VITE_WHATSAPP_PHONE_NUMBER);
+  }, []);
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -195,7 +195,6 @@ const PaymentForm = ({ laptop, onClose, onSuccess }) => {
     }
   };
 
-  // Rest of your component remains the same...
   return (
     <div className="space-y-6">
       <div className="flex items-center">

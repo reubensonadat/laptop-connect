@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+// src/components/LaptopModal.js
+
+import React, { useState, useEffect } from 'react';
 import { formatPrice, formatCondition } from '../utils/helpers';
 import PaymentForm from './PaymentForm';
 
@@ -63,6 +65,11 @@ const LaptopModal = ({ laptop, isOpen, onClose }) => {
 
   const handlePaymentClose = () => {
     setShowPaymentForm(false);
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentForm(false);
+    onClose();
   };
 
   const handleWhatsAppEnquiry = () => {
@@ -131,7 +138,7 @@ const LaptopModal = ({ laptop, isOpen, onClose }) => {
               <PaymentForm 
                 laptop={laptop} 
                 onClose={handlePaymentClose}
-                onSuccess={onClose}
+                onSuccess={handlePaymentSuccess}
               />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
