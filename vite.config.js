@@ -8,6 +8,17 @@ export default defineConfig({
     host: '0.0.0.0'
   },
   build: {
-    outDir: 'dist'
-  }
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom']
+        }
+      }
+    }
+  },
+  base: './' // This ensures assets are loaded with relative paths
 })

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { usePaystackPayment } from 'react-paystack';
 import { formatPrice } from '../utils/helpers';
+import PaymentService from '../services/paymentService';
 
 // Custom WhatsApp message generator
 const generateWhatsAppMessage = (laptop, formData, reference) => {
@@ -29,36 +29,6 @@ const PaymentForm = ({ laptop, onClose, onSuccess }) => {
   const amount = formData.paymentType === 'full' 
     ? laptop.price * 100 // Paystack expects amount in kobo (cents)
     : Math.ceil(laptop.price / 2) * 100;
-
-  const config = {
-    reference: (new Date()).getTime().toString(),
-    email: formData.email,
-    amount: amount,
-    publicKey: publicKey,
-    currency: 'GHS', // Explicitly set currency to Ghanaian Cedis
-    metadata: {
-      custom_fields: [
-        {
-          display_name: "Product",
-          variable_name: "product",
-          value: `${laptop.brand} ${laptop.model}`
-        },
-        {
-          display_name: "Payment Type",
-          variable_name: "payment_type",
-          value: formData.paymentType === 'full' ? 'Full Payment' : 'Half Payment'
-        }
-      ]
-    },
-    callback: (response) => {
-      handlePaymentSuccess(response);
-    },
-    onClose: () => {
-      setIsProcessing(false);
-    }
-  };
-
-  const initializePayment = usePaystackPayment(config);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -107,7 +77,7 @@ const PaymentForm = ({ laptop, onClose, onSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -117,7 +87,36 @@ const PaymentForm = ({ laptop, onClose, onSuccess }) => {
     setIsProcessing(true);
     setPaymentError('');
     
-    initializePayment(handlePaymentSuccess, handlePaymentClose);
+    try {
+      const config = {
+        key: publicKey,
+        email: formData.email,
+        amount: amount,
+        currency: 'GHS', // Explicitly set currency to Ghanaian Cedis
+        ref: (new Date()).getTime().toString(),
+        metadata: {
+          custom_fields: [
+            {
+              display_name: "Product",
+              variable_name: "product",
+              value: `${laptop.brand} ${laptop.model}`
+            },
+            {
+              display_name: "Payment Type",
+              variable_name: "payment_type",
+              value: formData.paymentType === 'full' ? 'Full Payment' : 'Half Payment'
+            }
+          ]
+        }
+      };
+      
+      const response = await PaymentService.initializePayment(config);
+      handlePaymentSuccess(response);
+    } catch (error) {
+      setIsProcessing(false);
+      setPaymentError('Payment failed. Please try again.');
+      console.error('Payment error:', error);
+    }
   };
 
   const handlePaymentSuccess = (response) => {
@@ -142,10 +141,6 @@ const PaymentForm = ({ laptop, onClose, onSuccess }) => {
       // Close modal and notify parent
       onSuccess(response);
     }
-  };
-
-  const handlePaymentClose = () => {
-    setIsProcessing(false);
   };
 
   const handleOpenWhatsApp = () => {
@@ -176,6 +171,9 @@ const PaymentForm = ({ laptop, onClose, onSuccess }) => {
     }
   };
 
+  // Rest of your component remains the same...
+  // (I'm keeping the rest of the component unchanged to avoid confusion)
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center">
