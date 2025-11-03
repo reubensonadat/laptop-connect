@@ -104,7 +104,10 @@ const Footer = () => {
             </p>
             <div className="mt-4 md:mt-0">
               <p className="text-sm text-secondary-gray">
-                Designed with ❤️ in Ghana
+                Designed by 
+                <Link to="https://synaptech.pages.dev/" className="">
+                  <span className="text-purple-600 dark:text-purple-400"> Synap Tech</span>
+                </Link>
               </p>
             </div>
           </div>
