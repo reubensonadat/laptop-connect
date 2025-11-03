@@ -391,7 +391,8 @@ const LaptopModal = ({ laptop, isOpen, onClose }) => {
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex space-x-3 pt-4">
+                  <div className='flex justify-center'>
+                    <div className="flex space-x-3 pt-4">
                     <button
                       className="flex-1 px-4 py-2 bg-primary-blue text-white font-medium rounded hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-blue focus:ring-offset-2"
                       onClick={handlePaymentClick}
@@ -414,6 +415,7 @@ const LaptopModal = ({ laptop, isOpen, onClose }) => {
                     >
                       Close
                     </button>
+                  </div>
                   </div>
                 </div>
               </div>
