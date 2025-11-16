@@ -24,5 +24,9 @@ export default defineConfig({
   base: './',
   optimizeDeps: {
     include: ['react', 'react-dom']
+  },
+  // Add these SEO-friendly configurations
+  define: {
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString())
   }
 })

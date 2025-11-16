@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Laptop Connect",
+  "description": "Your trusted partner for quality laptops in Ghana since 2025",
+  "url": "https://www.laptopconnect.shop",
+  "logo": "https://www.laptopconnect.shop/logo.png",
+  "image": "https://www.laptopconnect.shop/logo.png",
+  "telephone": "+233 20 153 4711",
+  "email": "laptopconnect@gmail.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "UCC Cape Coast Campus",
+    "addressLocality": "Cape Coast",
+    "addressCountry": "Ghana"
+  },
+  "openingHours": "Mo-Fr 09:00-18:00 Sa 10:00-16:00",
+  "sameAs": [
+    "https://www.facebook.com/laptopconnect",
+    "https://www.twitter.com/laptopconnect",
+    "https://www.instagram.com/laptopconnect",
+    "https://www.linkedin.com/company/laptopconnect"
+  ],
+  "priceRange": "$$"
+}
