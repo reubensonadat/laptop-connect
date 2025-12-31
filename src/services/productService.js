@@ -1,6 +1,6 @@
 // Keep using your direct Google Sheets URL
 const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQBk9tAiZGPr29OFv4jpD2rxyVd10lufJTvQTs3_-ZG1e7B0P1KoUqrjnOrijjoMCxYqLMRu0Rk71Cx/pub?output=csv';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 1; // 1 ms for debugging
 
 // Cache for storing fetched data
 let cachedProducts = null;
@@ -64,9 +64,8 @@ const parseCSV = (csvText) => {
 
         const row = {};
         headers.forEach((header, index) => {
-            // Normalize header to lowercase for consistent access if needed, 
-            // but keeping it as is to match sheet exactly for now.
-            const cleanHeader = header.trim();
+            // Normalize header to lowercase for consistent access
+            const cleanHeader = header.trim().toLowerCase();
             row[cleanHeader] = values[index] || '';
         });
 
@@ -111,33 +110,34 @@ const transformToProduct = (rawData) => {
 
     // Core fields that represent the main product identity
     const coreFields = [
-        'id', 'category', 'Category', 'brand', 'Brand', 'model', 'Model',
-        'price', 'Price', 'availability', 'Availability', 'condition', 'Condition',
-        'description', 'Description', 'imageUrls', 'ImageUrls',
-        'createdAt', 'updatedAt', 'name', 'Name', 'type', 'Type'
+        'id', 'category', 'brand', 'model',
+        'price', 'availability', 'condition',
+        'description', 'imageurls', 'image url',
+        'createdat', 'updatedat', 'name', 'type'
     ];
 
     // Try to determine category
     let category = 'Laptop'; // Default
-    if (rawData.category || rawData.Category) {
-        category = rawData.category || rawData.Category;
-    } else if (rawData.type || rawData.Type) {
-        category = rawData.type || rawData.Type;
+    if (rawData.category) {
+        category = rawData.category;
+    } else if (rawData.type) {
+        category = rawData.type;
     }
 
     // Create the base product object
     const product = {
         id: rawData.id || `P${Math.random().toString(36).substr(2, 9)}`,
         category: category,
-        brand: rawData.brand || rawData.Brand || 'Generic',
-        model: rawData.model || rawData.Model || '',
-        price: convertToNumber(rawData.price || rawData.Price) || 0,
-        availability: convertToBoolean(rawData.availability || rawData.Availability),
-        condition: rawData.condition || rawData.Condition || 'Used',
-        description: rawData.description || rawData.Description || '',
-        imageUrls: parseImageUrls(rawData.imageUrls || rawData.ImageUrls),
-        createdAt: rawData.createdAt || new Date().toISOString(),
-        updatedAt: rawData.updatedAt || new Date().toISOString(),
+        brand: rawData.brand || 'Generic',
+        model: rawData.model || '',
+        price: convertToNumber(rawData.price) || 0,
+        availability: convertToBoolean(rawData.availability),
+        condition: rawData.condition || 'Used',
+        description: rawData.description || '',
+        imageUrls: parseImageUrls(rawData.imageurls || rawData['image url'] || rawData.imageUrls),
+        createdAt: rawData.createdat || new Date().toISOString(),
+        updatedAt: rawData.updatedat || new Date().toISOString(),
+
         // Collection for all other specification fields
         specs: {}
     };
