@@ -235,31 +235,30 @@ const CourseRecommendation = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-4 sm:p-6 lg:p-8 mb-8 shadow-lg">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-        <div className="flex items-center">
-          <div className={`${getIconBgColor('blue')} text-white p-3 rounded-lg mr-4`}>
+    <div className="bg-white rounded-2xl p-6 sm:p-8 lg:p-10 mb-8 border border-gray-100 shadow-xl shadow-blue-900/5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
+        <div className="flex items-start md:items-center gap-4">
+          <div className={`${getIconBgColor('blue')} bg-opacity-20 text-blue-600 p-3.5 rounded-xl shrink-0`}>
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Find Your Perfect Laptop</h2>
-            <p className="text-sm sm:text-base text-secondary-gray">Select your course of study to see our recommendations</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">Expert Recommendations</h2>
+            <p className="text-gray-500 mt-1">Select your field to find the perfect device match</p>
           </div>
         </div>
         <button
-          className="flex items-center text-primary-blue hover:text-blue-700 focus:outline-none font-medium text-sm sm:text-base"
+          className="flex items-center justify-center px-5 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200"
           onClick={handleToggleExpand}
           aria-expanded={isExpanded}
         >
-          <span className="mr-1 hidden sm:inline">{isExpanded ? 'Hide Recommendations' : 'Show Recommendations'}</span>
-          <span className="mr-1 sm:hidden">{isExpanded ? 'Hide' : 'Show'}</span>
-          <svg 
-            className={`w-5 h-5 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24" 
+          <span>{isExpanded ? 'Collapse Recommendations' : 'Explore Recommendations'}</span>
+          <svg
+            className={`w-4 h-4 ml-2 transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -274,11 +273,10 @@ const CourseRecommendation = () => {
             {courses.map((course) => (
               <button
                 key={course.id}
-                className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors ${
-                  selectedCourse?.id === course.id
-                    ? getColorClasses(course.color)
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                }`}
+                className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors ${selectedCourse?.id === course.id
+                  ? getColorClasses(course.color)
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                  }`}
                 onClick={() => handleCourseSelect(course)}
               >
                 {course.name}
@@ -291,22 +289,21 @@ const CourseRecommendation = () => {
             {courses.map((course) => (
               <div
                 key={course.id}
-                className={`bg-white rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-xl transition-all duration-300 border ${
-                  selectedCourse?.id === course.id
-                    ? 'ring-2 ring-primary-blue transform scale-105'
-                    : 'border-gray-100 hover:border-gray-200'
-                }`}
+                className={`group relative rounded-xl p-5 sm:p-6 transition-all duration-300 border-2 shadow-sm hover:shadow-lg ${selectedCourse?.id === course.id
+                  ? 'bg-white border-blue-500 scale-[1.02] z-10'
+                  : 'bg-white border-transparent hover:border-gray-200'
+                  }`}
                 onClick={() => handleCourseSelect(course)}
               >
                 <div className="flex items-center mb-4">
-                  <div className={`${getIconBgColor(course.color)} bg-opacity-10 text-${course.color}-500 p-3 rounded-lg mr-3`}>
+                  <div className={`${getIconBgColor(course.color)} bg-opacity-10 text-${course.color}-600 p-3 rounded-lg mr-3 group-hover:scale-110 transition-transform duration-300`}>
                     {course.icon}
                   </div>
                   <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{course.name}</h3>
                 </div>
-                
+
                 <p className="text-xs sm:text-sm text-secondary-gray mb-4">{course.description}</p>
-                
+
                 <div className="space-y-3 mb-4">
                   <div className="flex items-start">
                     <svg className="w-4 h-4 mr-2 text-primary-blue mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -317,7 +314,7 @@ const CourseRecommendation = () => {
                       <p className="text-xs text-secondary-gray">{course.requirements}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <svg className="w-4 h-4 mr-2 text-primary-blue mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -328,17 +325,17 @@ const CourseRecommendation = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Detailed information (shown when selected) */}
                 {selectedCourse?.id === course.id && (
                   <div className="mt-4 pt-4 border-t border-gray-200 animate-fadeIn">
                     <p className="text-xs text-secondary-gray mb-3">{course.detailedDescription}</p>
-                    
+
                     <div className="mb-3">
                       <p className="text-xs font-medium text-gray-700 mb-1">Detailed Requirements:</p>
                       <p className="text-xs text-secondary-gray">{course.detailedRequirements}</p>
                     </div>
-                    
+
                     <div>
                       <p className="text-xs font-medium text-gray-700 mb-2">Recommended Models:</p>
                       <ul className="text-xs text-secondary-gray space-y-1">

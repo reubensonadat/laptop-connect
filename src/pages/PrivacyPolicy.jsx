@@ -6,10 +6,10 @@ const PrivacyPolicy = () => {
     scrollToTop();
   }, []);
 
-  const lastUpdated = new Date().toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+  const lastUpdated = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
   });
 
   return (
@@ -46,8 +46,8 @@ const PrivacyPolicy = () => {
               We may collect the following types of information:
             </p>
             <ul className="list-disc pl-5 mb-4 space-y-2 text-gray-600">
-              <li><strong>Personal Information:</strong> Name, email address, phone number, delivery address, and payment information</li>
-              <li><strong>Technical Information:</strong> IP address, browser type, operating system, and device information</li>
+              <li><strong>Personal Information:</strong> Name, email address, phone number, and delivery address when provided during inquiries</li>
+              <li><strong>Communication Data:</strong> Records of our WhatsApp conversations regarding availability and orders</li>
               <li><strong>Usage Information:</strong> Pages visited, time spent on the website, and click patterns</li>
               <li><strong>Cookies and Tracking Data:</strong> Information collected through cookies and similar technologies</li>
             </ul>
@@ -80,7 +80,6 @@ const PrivacyPolicy = () => {
               We may share your personal information with:
             </p>
             <ul className="list-disc pl-5 mb-4 space-y-2 text-gray-600">
-              <li><strong>Payment Processors:</strong> To process payments securely</li>
               <li><strong>Delivery Services:</strong> To deliver your orders</li>
               <li><strong>Third-Party Service Providers:</strong> To help us operate our website and services</li>
               <li><strong>Legal Authorities:</strong> When required by law or to protect our rights</li>

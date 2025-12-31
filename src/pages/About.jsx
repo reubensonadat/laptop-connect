@@ -8,7 +8,7 @@ const About = () => {
   }, []);
 
   const stats = [
-    { number: "100+", label: "Laptops Sold" },
+    { number: "100+", label: "Devices Sold" },
     { number: "2025", label: "Year Founded" },
     { number: "24/7", label: "Support Available" },
     { number: "100%", label: "Customer Satisfaction" }
@@ -48,10 +48,10 @@ const About = () => {
 
   return (
     <>
-      <SEO 
+      <SEO
         title="About Laptop Connect"
         description="Learn about Laptop Connect, your trusted partner for quality laptops in Ghana since 2025. Our mission is to bridge the digital divide by making quality laptops accessible to everyone."
-        keywords="about laptop connect, laptop ghana, laptop shop ghana, laptop store ghana, laptop accra"
+        keywords="about laptop connect, gadgets ghana, tech shop ghana, laptop store ghana, electronics accra"
         ogUrl="https://www.laptopconnect.shop/about"
         structuredData={aboutStructuredData}
       />
@@ -65,13 +65,13 @@ const About = () => {
                 Your trusted partner for quality laptops in Ghana since 2025
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button 
+                <button
                   onClick={() => window.location.href = '/'}
                   className="px-6 py-3 bg-white text-primary-blue font-semibold rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   Shop Now
                 </button>
-                <button 
+                <button
                   onClick={() => window.location.href = '/contact'}
                   className="px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-primary-blue transition-colors"
                 >
@@ -82,7 +82,7 @@ const About = () => {
           </div>
           <div className="absolute bottom-0 left-0 right-0">
             <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 120L60 105C120 90 180 60 240 45C300 30 360 30 420 45C480 60 540 90 600 105C660 120 720 120 780 105C840 90 900 60 960 45C1020 30 1080 30 1140 45C1200 60 1260 90 1320 105C1380 120 1440 120 1440 120V120H0Z" fill="white"/>
+              <path d="M0 120L60 105C120 90 180 60 240 45C300 30 360 30 420 45C480 60 540 90 600 105C660 120 720 120 780 105C840 90 900 60 960 45C1020 30 1080 30 1140 45C1200 60 1260 90 1320 105C1380 120 1440 120 1440 120V120H0Z" fill="white" />
             </svg>
           </div>
         </header>
@@ -109,23 +109,23 @@ const About = () => {
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Story</h2>
                 <div className="w-20 h-1 bg-primary-blue mx-auto mb-6"></div>
               </div>
-              
+
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 <div>
                   <p className="text-lg text-gray-700 mb-6">
-                    Laptop Connect was founded in 2025 with a simple mission: to provide Ghanaian students and professionals with access to quality laptops at affordable prices. We understand that a reliable laptop is essential for academic success and professional growth in today's digital world.
+                    Laptop Connect was founded in 2025 with a simple mission: to provide Ghanaian students and professionals with access to quality technology at affordable prices. We understand that reliable gadgets are essential for academic success and professional growth in today's digital world.
                   </p>
                   <p className="text-lg text-gray-700 mb-6">
-                    Though we're a young company, we've already helped over 100 customers find the perfect laptop for their specific needs. Our team of tech experts carefully selects each laptop in our inventory to ensure it meets the highest standards of performance and reliability.
+                    Though we're a young company, we've already helped over 100 customers find the perfect devices for their specific needs. Our team of tech experts carefully selects each product in our inventory to ensure it meets the highest standards of performance and reliability.
                   </p>
                   <p className="text-lg text-gray-700">
-                    We're committed to providing not just products, but complete solutions that include personalized recommendations, flexible payment options, and exceptional customer service.
+                    We're committed to providing not just products, but complete solutions that include personalized recommendations, easier availability checks, and exceptional customer service.
                   </p>
                 </div>
                 <div className="relative">
-                  <img 
-                    src="https://via.placeholder.com/500x400/2563eb/ffffff?text=Our+Journey" 
-                    alt="Laptop Connect team members helping customers find their perfect laptops" 
+                  <img
+                    src="https://via.placeholder.com/500x400/2563eb/ffffff?text=Our+Journey"
+                    alt="Laptop Connect team members helping customers find their perfect laptops"
                     className="rounded-lg shadow-lg"
                   />
                   <div className="absolute -bottom-4 -right-4 bg-primary-blue text-white p-4 rounded-lg shadow-lg">
@@ -159,7 +159,7 @@ const About = () => {
                     We're committed to providing not just products, but complete solutions that include personalized recommendations, flexible payment options, and exceptional customer service.
                   </p>
                 </div>
-                
+
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-8 rounded-lg">
                   <div className="flex items-center mb-4">
                     <div className="bg-success-green text-white p-3 rounded-lg mr-4">
@@ -190,7 +190,7 @@ const About = () => {
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Values</h2>
                 <div className="w-20 h-1 bg-primary-blue mx-auto mb-6"></div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
                   { icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', title: 'Quality', desc: 'We never compromise on quality' },
@@ -222,7 +222,7 @@ const About = () => {
                 <div className="w-20 h-1 bg-primary-blue mx-auto mb-6"></div>
                 <p className="text-gray-600">Our milestones so far</p>
               </div>
-              
+
               <div className="relative">
                 <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-primary-blue"></div>
                 {milestones.map((milestone, index) => (
@@ -254,7 +254,7 @@ const About = () => {
               <p className="text-xl mb-8 text-blue-100">
                 Join our growing family of satisfied customers who trust Laptop Connect
               </p>
-              <button 
+              <button
                 onClick={() => window.location.href = '/'}
                 className="px-8 py-3 bg-white text-primary-blue font-semibold rounded-lg hover:bg-gray-100 transition-colors"
               >

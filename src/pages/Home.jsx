@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useLaptops } from '../hooks/useLaptops';
-import LaptopCard from '../components/LaptopCard';
-import LaptopModal from '../components/LaptopModal';
+import { useProducts } from '../hooks/useProducts';
+import ProductCard from '../components/ProductCard';
+import ProductModal from '../components/ProductModal';
 import CourseRecommendation from '../components/CourseRecommendation';
 import SearchFilter from '../components/SearchFilter';
 import SEO from '../components/SEO';
@@ -9,16 +9,16 @@ import { debounce } from '../utils/helpers';
 
 const Home = () => {
   const {
-    laptops,
-    filteredLaptops,
+    products,
+    filteredProducts,
     loading,
     error,
     filters,
     updateFilter,
     clearFilters
-  } = useLaptops();
+  } = useProducts();
 
-  const [selectedLaptop, setSelectedLaptop] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm);
 
@@ -32,12 +32,12 @@ const Home = () => {
     debouncedSearch(searchTerm);
   }, [searchTerm, debouncedSearch]);
 
-  const handleLaptopClick = (laptop) => {
-    setSelectedLaptop(laptop);
+  const handleProductClick = (product) => {
+    setSelectedProduct(product);
   };
 
   const handleCloseModal = () => {
-    setSelectedLaptop(null);
+    setSelectedProduct(null);
   };
 
   const handleToggleFilters = () => {
@@ -54,7 +54,7 @@ const Home = () => {
     "@type": "WebSite",
     "name": "Laptop Connect",
     "url": "https://www.laptopconnect.shop",
-    "description": "Find Your Perfect Laptop in Ghana",
+    "description": "Find Your Perfect Gadget in Ghana",
     "potentialAction": {
       "@type": "SearchAction",
       "target": "https://www.laptopconnect.shop/?q={search_term_string}",
@@ -64,63 +64,72 @@ const Home = () => {
 
   return (
     <>
-      <SEO 
-        title="Find Your Perfect Laptop"
-        description="Discover laptops from top brands like Dell, HP, Lenovo, Apple, Acer, Microsoft tailored to your academic needs. Shop from a wide selection of new and used laptops at competitive prices in Ghana."
+      <SEO
+        title="Find Your Perfect Gadget"
+        description="Discover laptops, smartphones, watches and more tailored to your needs. Shop from a wide selection of new and used gadgets at competitive prices in Ghana."
         structuredData={homepageStructuredData}
       />
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <header className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
           <div className="absolute inset-0 bg-black opacity-40"></div>
-          <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-24">
-            <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                Find Your Perfect Laptop
+          <div className="relative container mx-auto px-6 sm:px-8 lg:px-12 py-32">
+            <div className="text-center max-w-5xl mx-auto z-10 relative">
+              <span className="inline-block py-1 px-3 rounded-full bg-blue-500 bg-opacity-30 border border-blue-400 text-blue-100 text-sm font-semibold mb-6 backdrop-blur-sm animate-fadeIn">
+                Premium Electronics Catalog
+              </span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
+                Find Your Perfect <br className="hidden md:block" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">
+                  Tech Companion
+                </span>
               </h1>
-              <p className="text-xl md:text-2xl mb-8 text-blue-100">
-                Discover laptops tailored to your academic needs with our intelligent recommendation system
+              <p className="text-lg sm:text-xl md:text-2xl mb-10 text-blue-100 max-w-3xl mx-auto font-light leading-relaxed">
+                Discover a curated collection of Laptops, Smartwatches, Phones & More. <br className="hidden sm:block" /> All tailored to your needs.
               </p>
-              
+
               {/* Search Bar */}
-              <div className="relative max-w-2xl mx-auto mb-8">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
+              <div className="relative max-w-xl mx-auto mb-10 group">
+                <div className="absolute inset-0 bg-blue-400 rounded-xl blur opacity-20 group-hover:opacity-30 transition duration-300"></div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    className="block w-full pl-11 pr-4 py-4 border-0 bg-white text-gray-900 placeholder-gray-500 rounded-xl shadow-lg ring-1 ring-black/5 focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+                    placeholder="Search for MacBook, iPhone, Galaxy Watch..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                  />
                 </div>
-                <input
-                  type="text"
-                  className="block w-full pl-10 pr-4 py-4 border border-blue-300 bg-white bg-opacity-90 text-gray-900 placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Search by brand, model, or processor..."
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                />
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
-                  className="inline-flex items-center px-6 py-3 bg-white text-blue-700 font-medium rounded-lg hover:bg-gray-100 transition-colors"
+                  className="inline-flex items-center justify-center px-8 py-3.5 bg-white text-blue-600 font-semibold rounded-xl shadow-lg hover:bg-blue-50 hover:scale-105 transition-all duration-300 transform"
                   onClick={handleToggleFilters}
                 >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                   </svg>
-                  Filters
+                  Browse Categories
                 </button>
               </div>
             </div>
           </div>
-          
+
           {/* Wave SVG */}
           <div className="absolute bottom-0 left-0 right-0">
             <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 120L60 105C120 90 180 60 240 45C300 30 360 30 420 45C480 60 540 90 600 105C660 120 720 120 780 105C840 90 900 60 960 45C1020 30 1080 30 1140 45C1200 60 1260 90 1320 105C1380 120 1440 120 1440 120V120H0Z" fill="currentColor"/>
+              <path d="M0 120L60 105C120 90 180 60 240 45C300 30 360 30 420 45C480 60 540 90 600 105C660 120 720 120 780 105C840 90 900 60 960 45C1020 30 1080 30 1140 45C1200 60 1260 90 1320 105C1380 120 1440 120 1440 120V120H0Z" fill="currentColor" />
             </svg>
           </div>
         </header>
 
-        {/* Course Recommendation */}
+        {/* Course Recommendation - Keeping it as legacy or rename "Recommendation" */}
         <section className="py-16 bg-white">
           <CourseRecommendation />
         </section>
@@ -132,7 +141,7 @@ const Home = () => {
               filters={filters}
               updateFilter={updateFilter}
               clearFilters={clearFilters}
-              laptops={laptops}
+              products={products}
             />
           </aside>
         )}
@@ -143,10 +152,10 @@ const Home = () => {
             <div className="flex flex-col md:flex-row justify-between items-center mb-8">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {searchTerm ? `Search Results for "${searchTerm}"` : 'All Laptops'}
+                  {searchTerm ? `Search Results for "${searchTerm}"` : 'All Products'}
                 </h2>
                 <p className="text-gray-600 mt-1">
-                  {loading ? 'Loading...' : `${filteredLaptops.length} laptops available`}
+                  {loading ? 'Loading...' : `${filteredProducts.length} items available`}
                 </p>
               </div>
               <div className="flex items-center space-x-4">
@@ -161,7 +170,7 @@ const Home = () => {
               </div>
             </div>
 
-            {/* Laptops Grid */}
+            {/* Products Grid */}
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {Array.from({ length: 8 }).map((_, index) => (
@@ -182,7 +191,7 @@ const Home = () => {
             ) : error ? (
               <div className="text-center py-12">
                 <div className="text-red-500 mb-4">{error}</div>
-                <p className="text-gray-600 mb-6">We're having trouble loading our laptops. Please try again later.</p>
+                <p className="text-gray-600 mb-6">We're having trouble loading our products. Please try again later.</p>
                 <button
                   className="px-4 py-2 bg-primary-blue text-white rounded hover:bg-blue-700 transition-colors"
                   onClick={() => window.location.reload()}
@@ -190,12 +199,12 @@ const Home = () => {
                   Try Again
                 </button>
               </div>
-            ) : filteredLaptops.length === 0 ? (
+            ) : filteredProducts.length === 0 ? (
               <div className="text-center py-12">
                 <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0H9l-2.544-2.544a4 4 0 00-5.656 0L3.172 12.828a4 4 0 005.656 0L9 10.172l2.544 2.544a4 4 0 005.656 0l4.95-4.95a4 4 0 00-5.656 0z" />
                 </svg>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No laptops found</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
                 <p className="text-gray-600 mb-6">Try adjusting your filters or search terms</p>
                 <button
                   className="px-4 py-2 bg-primary-blue text-white rounded hover:bg-blue-700 transition-colors"
@@ -206,11 +215,11 @@ const Home = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredLaptops.map((laptop) => (
-                  <LaptopCard
-                    key={laptop.id}
-                    laptop={laptop}
-                    onClick={handleLaptopClick}
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onClick={handleProductClick}
                   />
                 ))}
               </div>
@@ -218,10 +227,10 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Laptop Modal */}
-        <LaptopModal
-          laptop={selectedLaptop}
-          isOpen={!!selectedLaptop}
+        {/* Product Modal */}
+        <ProductModal
+          product={selectedProduct}
+          isOpen={!!selectedProduct}
           onClose={handleCloseModal}
         />
       </div>

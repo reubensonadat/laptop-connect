@@ -6,10 +6,10 @@ const TermsAndConditions = () => {
     scrollToTop();
   }, []);
 
-  const lastUpdated = new Date().toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+  const lastUpdated = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
   });
 
   return (
@@ -62,10 +62,10 @@ const TermsAndConditions = () => {
 
             <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">4. Payment and Pricing</h2>
             <p className="mb-4">
-              All prices are displayed in Ghanaian Cedis (GHS) and are inclusive of applicable taxes. We accept payment through Paystack, a secure payment gateway. By providing your payment information, you represent that you are authorized to use the payment method.
+              All prices are displayed in Ghanaian Cedis (GHS). We currently handle all sales inquiries and availability checks directly through WhatsApp to ensure the best customer service.
             </p>
             <p className="mb-4">
-              We offer two payment options: full payment and half payment. For half payments, the remaining balance must be paid before delivery of the product.
+              Payment methods and terms will be discussed and agreed upon during the checkout process via WhatsApp. We accept various delivery and payment arrangements to suit your needs.
             </p>
 
             <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">5. Delivery</h2>
