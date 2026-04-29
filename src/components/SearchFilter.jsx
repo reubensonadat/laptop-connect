@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const SearchFilter = ({ filters, updateFilter, clearFilters, products }) => {
   const [priceRange, setPriceRange] = useState({
@@ -12,191 +12,180 @@ const SearchFilter = ({ filters, updateFilter, clearFilters, products }) => {
   const rams = [...new Set(products.map(product => product.ram))].filter(Boolean).sort();
   const storages = [...new Set(products.map(product => product.storage))].filter(Boolean).sort();
 
-  // Get unique conditions and normalize them
-  const conditions = [...new Set(products.map(product => product.condition))]
-    .filter(Boolean)
-    .map(condition => condition.trim())
-    .sort();
+  // Dynamic Max Price calculation
+  const maxInventoryPrice = products && products.length > 0 
+    ? Math.max(...products.map(p => p.price || 0)) 
+    : 20000;
+    
+  const sliderMax = Math.ceil((maxInventoryPrice || 20000) / 1000) * 1000;
+
+  useEffect(() => {
+    if (priceRange.max > sliderMax && sliderMax > 0) {
+      setPriceRange(prev => ({ ...prev, max: sliderMax }));
+      updateFilter('maxPrice', sliderMax);
+    }
+  }, [sliderMax]);
 
   const handlePriceChange = (type, value) => {
-    const newPriceRange = { ...priceRange, [type]: value };
+    const numValue = Math.min(Math.max(0, Number(value)), sliderMax);
+    const newPriceRange = { ...priceRange, [type]: numValue };
     setPriceRange(newPriceRange);
-    updateFilter(`${type}Price`, value); // 'minPrice' or 'maxPrice'
+    updateFilter(`${type}Price`, numValue);
   };
 
   const handleClearFilters = () => {
-    setPriceRange({ min: 0, max: 30000 });
+    setPriceRange({ min: 0, max: sliderMax });
     clearFilters();
   };
 
-  // Helper function to format condition display name
-  const formatConditionDisplay = (condition) => {
-    if (condition === 'NEW') return 'New';
-    if (condition === 'UK_USED') return 'UK Used';
-    if (condition === 'LOCAL_USED') return 'Local Used';
-    return condition;
-  };
-
   return (
-    <div className="bg-background-light-gray rounded-lg p-6 mb-6">
-      <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
-        <h2 className="text-xl font-semibold text-gray-900">Filter Products</h2>
-        <div className="flex items-center gap-4 w-full sm:w-auto">
-          <select
-            className="px-3 py-2 border border-border-gray rounded-md focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent text-sm w-full sm:w-auto"
-            value={filters.sortBy}
-            onChange={(e) => updateFilter('sortBy', e.target.value)}
-          >
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="newest">Newest First</option>
-          </select>
+    <div className="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm sticky top-28 max-h-[calc(100vh-140px)] overflow-y-auto no-scrollbar selection:bg-black selection:text-white">
+      <div className="flex flex-col gap-10">
+        <div className="flex items-center justify-between border-b border-gray-50 pb-6">
+          <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter italic">Filters</h2>
           <button
-            className="text-sm text-primary-blue hover:text-blue-700 focus:outline-none whitespace-nowrap"
+            className="text-[10px] font-black text-gray-400 hover:text-black uppercase tracking-widest transition-colors"
             onClick={handleClearFilters}
           >
             Clear All
           </button>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        {/* Category Filter */}
-        <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-            Category
-          </label>
-          <select
-            id="category"
-            className="w-full px-3 py-2 border border-border-gray rounded-md focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent"
-            value={filters.category}
-            onChange={(e) => updateFilter('category', e.target.value)}
-          >
-            <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
+        {/* Sorting Section */}
+        <div className="space-y-6">
+          <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Sort By</label>
+          <div className="flex flex-col gap-2">
+            {[
+              { id: 'price-asc', label: 'Price: Low to High' },
+              { id: 'price-desc', label: 'Price: High to Low' },
+              { id: 'newest', label: 'Newest First' }
+            ].map((option) => (
+              <button
+                key={option.id}
+                onClick={() => updateFilter('sortBy', option.id)}
+                className={`text-left px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 border ${
+                  filters.sortBy === option.id
+                  ? 'bg-black border-black text-white shadow-2xl'
+                  : 'bg-white border-gray-100 text-gray-400 hover:border-black hover:text-black'
+                }`}
+              >
+                {option.label}
+              </button>
             ))}
-          </select>
-        </div>
-
-        {/* Brand Filter */}
-        <div>
-          <label htmlFor="brand" className="block text-sm font-medium text-gray-700 mb-1">
-            Brand
-          </label>
-          <select
-            id="brand"
-            className="w-full px-3 py-2 border border-border-gray rounded-md focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent"
-            value={filters.brand}
-            onChange={(e) => updateFilter('brand', e.target.value)}
-          >
-            <option value="">All Brands</option>
-            {brands.map((brand) => (
-              <option key={brand} value={brand}>
-                {brand}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* RAM Filter - Only relevant where RAM exists */}
-        <div>
-          <label htmlFor="ram" className="block text-sm font-medium text-gray-700 mb-1">
-            RAM
-          </label>
-          <select
-            id="ram"
-            className="w-full px-3 py-2 border border-border-gray rounded-md focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent"
-            value={filters.ram}
-            onChange={(e) => updateFilter('ram', e.target.value)}
-          >
-            <option value="">All RAM</option>
-            {rams.map((ram) => (
-              <option key={ram} value={ram}>
-                {ram}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Storage Filter */}
-        <div>
-          <label htmlFor="storage" className="block text-sm font-medium text-gray-700 mb-1">
-            Storage
-          </label>
-          <select
-            id="storage"
-            className="w-full px-3 py-2 border border-border-gray rounded-md focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent"
-            value={filters.storage}
-            onChange={(e) => updateFilter('storage', e.target.value)}
-          >
-            <option value="">All Storage</option>
-            {storages.map((storage) => (
-              <option key={storage} value={storage}>
-                {storage}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Condition Filter */}
-        <div>
-          <label htmlFor="condition" className="block text-sm font-medium text-gray-700 mb-1">
-            Condition
-          </label>
-          <select
-            id="condition"
-            className="w-full px-3 py-2 border border-border-gray rounded-md focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent"
-            value={filters.condition}
-            onChange={(e) => updateFilter('condition', e.target.value)}
-          >
-            <option value="">All Conditions</option>
-            {conditions.map((condition) => (
-              <option key={condition} value={condition}>
-                {formatConditionDisplay(condition)}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Price Range Slider */}
-      <div className="mt-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Price Range: ₵{priceRange.min} - ₵{priceRange.max}
-        </label>
-        <div className="relative">
-          <div className="h-2 bg-gray-200 rounded-full">
-            <div
-              className="absolute h-2 bg-primary-blue rounded-full"
-              style={{
-                left: `${(priceRange.min / 30000) * 100}%`,
-                width: `${((priceRange.max - priceRange.min) / 30000) * 100}%`
-              }}
-            ></div>
           </div>
-          <input
-            type="range"
-            min="0"
-            max="30000"
-            step="100"
-            value={priceRange.min}
-            onChange={(e) => handlePriceChange('min', e.target.value)}
-            className="absolute w-full h-2 opacity-0 cursor-pointer"
-            style={{ zIndex: 2 }}
-          />
-          <input
-            type="range"
-            min="0"
-            max="30000"
-            step="100"
-            value={priceRange.max}
-            onChange={(e) => handlePriceChange('max', e.target.value)}
-            className="absolute w-full h-2 opacity-0 cursor-pointer"
-            style={{ zIndex: 1 }}
-          />
+        </div>
+
+        {/* Category Section */}
+        <div className="space-y-6 border-t border-gray-50 pt-10">
+          <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Category</label>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() => updateFilter('category', '')}
+              className={`text-left px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 ${
+                !filters.category 
+                ? 'bg-black text-white shadow-2xl translate-x-2' 
+                : 'text-gray-400 hover:text-black'
+              }`}
+            >
+              All Products
+            </button>
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => updateFilter('category', category)}
+                className={`text-left px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 ${
+                  filters.category === category 
+                  ? 'bg-black text-white shadow-2xl translate-x-2' 
+                  : 'text-gray-400 hover:text-black'
+                }`}
+              >
+                {category}s
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Brand Section */}
+        <div className="space-y-6 border-t border-gray-50 pt-10">
+          <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Brand</label>
+          <div className="flex flex-wrap gap-2">
+            {brands.map((brand) => (
+              <button
+                key={brand}
+                onClick={() => updateFilter('brand', filters.brand === brand ? '' : brand)}
+                className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 border ${
+                  filters.brand === brand 
+                  ? 'bg-black border-black text-white shadow-xl' 
+                  : 'bg-white border-gray-100 text-gray-400 hover:border-black hover:text-black'
+                }`}
+              >
+                {brand}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Price Range Section */}
+        <div className="space-y-6 border-t border-gray-50 pt-10">
+          <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Price Range (GHS)</label>
+          <div className="flex items-center gap-4">
+            <input 
+              type="number"
+              value={priceRange.min}
+              onChange={(e) => handlePriceChange('min', e.target.value)}
+              className="w-full px-4 py-4 bg-gray-50 border border-gray-100 rounded-xl text-xs font-black text-gray-900 focus:outline-none focus:border-black transition-all"
+              placeholder="Min"
+            />
+            <span className="text-gray-300 font-black">/</span>
+            <input 
+              type="number"
+              value={priceRange.max}
+              onChange={(e) => handlePriceChange('max', e.target.value)}
+              className="w-full px-4 py-4 bg-gray-50 border border-gray-100 rounded-xl text-xs font-black text-gray-900 focus:outline-none focus:border-black transition-all"
+              placeholder="Max"
+            />
+          </div>
+        </div>
+
+        {/* Tech Specs Section */}
+        <div className="space-y-8 border-t border-gray-50 pt-10">
+          {rams.length > 0 && (
+            <div className="space-y-4">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Memory / RAM</label>
+              <div className="flex flex-wrap gap-2">
+                {rams.map((ram) => (
+                  <button
+                    key={ram}
+                    onClick={() => updateFilter('ram', filters.ram === ram ? '' : ram)}
+                    className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-500 ${
+                      filters.ram === ram ? 'bg-black border-black text-white shadow-xl' : 'bg-white border-gray-100 text-gray-400 hover:border-black hover:text-black'
+                    }`}
+                  >
+                    {ram}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {storages.length > 0 && (
+            <div className="space-y-4">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Storage / SSD</label>
+              <div className="flex flex-wrap gap-2">
+                {storages.map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => updateFilter('storage', filters.storage === st ? '' : st)}
+                    className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-500 ${
+                      filters.storage === st ? 'bg-black border-black text-white shadow-xl' : 'bg-white border-gray-100 text-gray-400 hover:border-black hover:text-black'
+                    }`}
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

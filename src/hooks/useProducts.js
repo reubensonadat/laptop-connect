@@ -25,6 +25,8 @@ export const useProducts = () => {
                 const data = await fetchProducts();
                 setProducts(data);
                 setFilteredProducts(data);
+                console.log('Total products loaded:', data.length);
+                console.log('Categories found in data:', [...new Set(data.map(p => p.category))]);
                 setError(null);
             } catch (err) {
                 setError('Failed to fetch products. Please try again later.');
@@ -51,11 +53,40 @@ export const useProducts = () => {
             );
         }
 
-        // Apply category filter
+        // Apply category filter (Handle singular/plural & Aliases)
         if (filters.category && filters.category !== 'All') {
+            const targetCat = filters.category.toLowerCase();
+            
+            // Smarter singularization
+            const getSingular = (cat) => {
+                if (cat.endsWith('es')) return cat.slice(0, -2); // watches -> watch
+                if (cat.endsWith('s') && !cat.endsWith('ss')) return cat.slice(0, -1); // phones -> phone
+                return cat;
+            };
+
+            const targetCatSingular = getSingular(targetCat);
+            
+            const categoryAliases = {
+                'watch': ['smart watch', 'watches', 'smart watches', 'wearables'],
+                'phone': ['smartphones', 'smartphone', 'phones', 'mobile', 'iphone'],
+                'laptop': ['laptops', 'notebooks', 'notebook', 'macbook'],
+                'accessor': ['accessories', 'accessory', 'gadgets']
+            };
+
             filtered = filtered.filter(product => {
                 if (!product.category) return false;
-                return product.category.toLowerCase() === filters.category.toLowerCase();
+                const prodCat = product.category.toLowerCase();
+                const prodCatSingular = getSingular(prodCat);
+                
+                // Direct match or singular match
+                if (prodCatSingular === targetCatSingular) return true;
+                if (prodCat === targetCat) return true;
+
+                // Check aliases
+                const aliases = categoryAliases[targetCatSingular];
+                if (aliases && aliases.some(alias => prodCat.includes(alias))) return true;
+
+                return false;
             });
         }
 
@@ -65,7 +96,7 @@ export const useProducts = () => {
         }
 
         // Apply RAM filter (only if product has ram)
-        if (filters.brand && filters.ram) {
+        if (filters.ram) {
             filtered = filtered.filter(product => product.ram && product.ram.includes(filters.ram));
         }
 
@@ -103,14 +134,14 @@ export const useProducts = () => {
         applyFilters();
     }, [applyFilters]);
 
-    const updateFilter = (key, value) => {
+    const updateFilter = useCallback((key, value) => {
         setFilters(prev => ({
             ...prev,
             [key]: value
         }));
-    };
+    }, []);
 
-    const clearFilters = () => {
+    const clearFilters = useCallback(() => {
         setFilters({
             category: '',
             brand: '',
@@ -121,7 +152,7 @@ export const useProducts = () => {
             maxPrice: 30000,
             searchTerm: ''
         });
-    };
+    }, []);
 
     const getProductById = (id) => {
         return products.find(product => product.id === id);

@@ -1,132 +1,139 @@
 import { useEffect } from 'react';
-import { scrollToTop } from '../utils/helpers';
+import { ScrollText, ShieldCheck, Scale, FileCode } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const TermsAndConditions = () => {
-  useEffect(() => {
-    scrollToTop();
-  }, []);
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
-  const lastUpdated = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+    const sections = [
+        {
+            id: "01",
+            title: "Service Protocol",
+            content: "By accessing Laptop Connect (the 'System'), you agree to operate within the defined technical parameters of our platform. Our service is a digital bridge for premium technology acquisition in Ghana."
+        },
+        {
+            id: "02",
+            title: "Hardware Acquisition",
+            content: "All transactions are final upon technical verification and physical handover. Inventory availability is subject to real-time synchronization and may fluctuate based on global supply chain logistics."
+        },
+        {
+            id: "03",
+            title: "Operational Liability",
+            content: "Laptop Connect engineers a secure environment for transactions. However, users are responsible for the physical security and technical maintenance of their acquired hardware post-delivery."
+        },
+        {
+            id: "04",
+            title: "Data Integrity",
+            content: "System metadata, including pricing and specifications, is subject to iterative updates. We reserve the right to correct any technical inaccuracies within the inventory data without prior notification."
+        }
+    ];
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-primary-blue to-blue-600 text-white py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">Terms and Conditions</h1>
-            <p className="text-blue-100 max-w-2xl mx-auto">
-              Please read these terms carefully before using our services
-            </p>
-          </div>
-        </div>
-      </div>
+    return (
+        <>
+            <SEO
+                title="Terms of Operation | Future Engineering"
+                description="Review the technical protocols and terms of operation for Laptop Connect. Our legal framework is engineered for transparency and security."
+            />
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
-          <div className="mb-8">
-            <p className="text-sm text-gray-500 mb-2">Last updated: {lastUpdated}</p>
-          </div>
+            <div className="min-h-screen bg-white text-gray-900 selection:bg-black selection:text-white">
 
-          <div className="prose prose max-w-none">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introduction</h2>
-            <p className="mb-4">
-              Welcome to Laptop Connect. These Terms and Conditions govern your use of our website and the purchase of products from our store. By accessing our website and/or purchasing something from us, you engage in our "Service" and agree to be bound by the following terms and conditions.
-            </p>
-            <p className="mb-4">
-              Please read these Terms and Conditions carefully before using our website. If you do not agree with any of these terms, you are prohibited from using or accessing this site.
-            </p>
+                {/* Technical Header */}
+                <header className="relative bg-gray-900 pt-32 pb-24 md:pt-48 md:pb-40 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-gray-800 opacity-90"></div>
+                    <div className="relative max-w-[1400px] mx-auto px-6 md:px-8 text-center">
+                        <span className="inline-block py-1 px-4 rounded-full bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black uppercase tracking-[0.4em] mb-8">
+                            Legal / Protocol / 003
+                        </span>
+                        <h1 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter leading-[0.85] mb-12">
+                            Terms of <br />
+                            <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-gray-100 to-gray-500">Operation.</span>
+                        </h1>
+                    </div>
+                </header>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">2. Use of the Website</h2>
-            <p className="mb-4">
-              You may use our website for lawful purposes only. You agree not to use the website:
-            </p>
-            <ul className="list-disc pl-5 mb-4 space-y-2 text-gray-600">
-              <li>In any way that violates any applicable national or international law</li>
-              <li>To transmit, or procure the sending of, any unsolicited or unauthorized advertising or promotional material</li>
-              <li>To impersonate or attempt to impersonate Laptop Connect, a Laptop Connect employee, another user, or any other person or entity</li>
-              <li>To engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the website</li>
-            </ul>
+                {/* Documentation Content */}
+                <section className="py-32">
+                    <div className="max-w-[1400px] mx-auto px-6 md:px-8">
+                        <div className="grid lg:grid-cols-12 gap-16">
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">3. Products and Services</h2>
-            <p className="mb-4">
-              We make every effort to display as accurately as possible the colors, features, specifications, and details of the products available on the website. However, we do not guarantee that the colors, features, specifications, and details of the products will be accurate, complete, reliable, current, or free of other errors.
-            </p>
-            <p className="mb-4">
-              We reserve the right to change the products, services, and prices described on the website at any time without notice. We are not liable to you or to any third-party for any modification, price change, suspension, or discontinuance of the products or services.
-            </p>
+                            {/* Sidebar Navigation */}
+                            <aside className="lg:col-span-4 space-y-12">
+                                <div className="p-8 bg-gray-50 rounded-[40px] border border-gray-100 space-y-6">
+                                    <h3 className="text-[10px] uppercase font-black tracking-[0.5em] text-gray-400">Documentation Index</h3>
+                                    <nav className="space-y-4">
+                                        {sections.map((section) => (
+                                            <a
+                                                key={section.id}
+                                                href={`#section-${section.id}`}
+                                                className="flex items-center gap-4 group"
+                                            >
+                                                <span className="text-xs font-black text-gray-300 group-hover:text-black transition-colors">{section.id}</span>
+                                                <span className="text-sm font-black uppercase tracking-tight text-gray-500 group-hover:text-black transition-colors">{section.title}</span>
+                                            </a>
+                                        ))}
+                                    </nav>
+                                </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">4. Payment and Pricing</h2>
-            <p className="mb-4">
-              All prices are displayed in Ghanaian Cedis (GHS). We currently handle all sales inquiries and availability checks directly through WhatsApp to ensure the best customer service.
-            </p>
-            <p className="mb-4">
-              Payment methods and terms will be discussed and agreed upon during the checkout process via WhatsApp. We accept various delivery and payment arrangements to suit your needs.
-            </p>
+                                <div className="p-8 bg-black rounded-[40px] text-white space-y-6">
+                                    <FileCode className="w-8 h-8 text-gray-500" />
+                                    <h4 className="text-xl font-black uppercase tracking-tighter italic">Compliance Sync</h4>
+                                    <p className="text-xs text-gray-400 font-medium leading-relaxed">Our terms are updated iteratively to align with the latest regional technology regulations and consumer protection protocols.</p>
+                                </div>
+                            </aside>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">5. Delivery</h2>
-            <p className="mb-4">
-              We offer delivery services within Ghana. Delivery times may vary depending on your location. We will provide you with an estimated delivery date when you place your order.
-            </p>
-            <p className="mb-4">
-              Risk of loss and title for all products ordered by you pass to you on our delivery to the specified delivery address.
-            </p>
+                            {/* Main Text Area */}
+                            <div className="lg:col-span-8 space-y-24">
+                                {sections.map((section) => (
+                                    <div key={section.id} id={`#section-${section.id}`} className="space-y-8 scroll-mt-40">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center font-black text-gray-400 italic">
+                                                {section.id}
+                                            </div>
+                                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-gray-900">{section.title}</h2>
+                                        </div>
+                                        <div className="pl-18 border-l border-gray-100 ml-6 space-y-6">
+                                            <p className="text-xl text-gray-600 font-medium leading-relaxed tracking-tight">
+                                                {section.content}
+                                            </p>
+                                            <p className="text-sm text-gray-400 font-bold uppercase tracking-widest italic">
+                                                Protocol Ref: GH-TECH-{section.id}-2026
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">6. Return Policy</h2>
-            <p className="mb-4">
-              If you are not satisfied with your purchase, you may return the product within 7 days of delivery for a refund or exchange, subject to the following conditions:
-            </p>
-            <ul className="list-disc pl-5 mb-4 space-y-2 text-gray-600">
-              <li>The product must be in its original condition, with all accessories and packaging</li>
-              <li>You must provide the original receipt or proof of purchase</li>
-              <li>The product must not be damaged or show signs of excessive use</li>
-              <li>Software, CDs, and other digital products cannot be returned once opened</li>
-            </ul>
-            <p className="mb-4">
-              Return shipping costs will be borne by the customer, unless the return is due to our error or a defective product.
-            </p>
+                        </div>
+                    </div>
+                </section>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">7. Warranty</h2>
-            <p className="mb-4">
-              All new laptops come with a manufacturer's warranty as specified in the product description. Used laptops come with a 30-day warranty covering hardware defects.
-            </p>
-            <p className="mb-4">
-              The warranty does not cover damage caused by accident, misuse, or normal wear and tear. To make a warranty claim, please contact us with your order number and a description of the issue.
-            </p>
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">8. Intellectual Property</h2>
-            <p className="mb-4">
-              The content of the website, including but not limited to text, graphics, images, logos, and software, is the property of Laptop Connect or its content suppliers and is protected by international copyright laws.
-            </p>
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">9. Limitation of Liability</h2>
-            <p className="mb-4">
-              In no event shall Laptop Connect, its directors, employees, partners, agents, suppliers, or affiliates be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your use of the website.
-            </p>
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">10. Governing Law</h2>
-            <p className="mb-4">
-              These Terms and Conditions shall be interpreted and governed by the laws of Ghana. Any dispute arising from these terms shall be subject to the exclusive jurisdiction of the courts of Ghana.
-            </p>
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">11. Changes to Terms and Conditions</h2>
-            <p className="mb-4">
-              We reserve the right to modify these Terms and Conditions at any time. Changes will be effective immediately upon posting on the website. Your continued use of the website after any changes constitutes acceptance of the new terms.
-            </p>
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">12. Contact Information</h2>
-            <p className="mb-4">
-              If you have any questions about these Terms and Conditions, please contact us at info@laptopconnect.shop or +233 20 153 4711.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+                {/* Technical Footer Area */}
+                <section className="py-24 bg-gray-50/50">
+                    <div className="max-w-[1400px] mx-auto px-6 md:px-8">
+                        <div className="grid md:grid-cols-3 gap-12 text-center md:text-left">
+                            <div className="space-y-4">
+                                <ShieldCheck className="mx-auto md:mx-0 w-8 h-8 text-gray-900" />
+                                <h5 className="font-black uppercase tracking-tight">Encrypted</h5>
+                                <p className="text-xs text-gray-500 font-bold">Protocol fully secured via end-to-end encryption standards.</p>
+                            </div>
+                            <div className="space-y-4">
+                                <Scale className="mx-auto md:mx-0 w-8 h-8 text-gray-900" />
+                                <h5 className="font-black uppercase tracking-tight">Legal Integrity</h5>
+                                <p className="text-xs text-gray-500 font-bold">Iterative updates based on Ghanaian tech compliance acts.</p>
+                            </div>
+                            <div className="space-y-4">
+                                <ScrollText className="mx-auto md:mx-0 w-8 h-8 text-gray-900" />
+                                <h5 className="font-black uppercase tracking-tight">Transparency</h5>
+                                <p className="text-xs text-gray-500 font-bold">Scrupulous reporting on all hardware acquisition policies.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </>
+    );
 };
 
 export default TermsAndConditions;

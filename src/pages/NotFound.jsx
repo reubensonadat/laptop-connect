@@ -1,70 +1,63 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { scrollToTop } from '../utils/helpers';
+import { AlertTriangle, Terminal, ArrowLeft } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const NotFound = () => {
   useEffect(() => {
-    scrollToTop();
+    window.scrollTo(0, 0);
   }, []);
 
   return (
-    <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8">
-      <div className="max-w-2xl mx-auto text-center">
-        <div className="mb-8">
-          <h1 className="text-6xl font-bold text-primary-blue mb-4">404</h1>
-          <h2 className="text-3xl font-semibold text-gray-900 mb-4">Page Not Found</h2>
-          <p className="text-lg text-secondary-gray mb-8">
-            Sorry, the page you are looking for doesn't exist or has been moved.
-          </p>
-        </div>
+    <>
+      <SEO title="404 - System Conflict" />
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
         
-        <div className="space-y-4">
-          <Link
-            to="/"
-            className="inline-block px-6 py-3 bg-primary-blue text-white font-medium rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-blue focus:ring-offset-2"
-          >
-            Go to Homepage
-          </Link>
-          
-          <div className="text-secondary-gray">
-            Or try searching for what you're looking for:
+        {/* Error Visualization */}
+        <div className="relative mb-12">
+          <div className="absolute inset-0 bg-red-500 blur-[80px] opacity-10 animate-pulse"></div>
+          <div className="w-32 h-32 bg-gray-900 rounded-[48px] flex items-center justify-center text-white relative z-10 shadow-2xl">
+            <AlertTriangle size={48} strokeWidth={1} />
           </div>
+          <div className="absolute -top-4 -right-4 bg-black text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-bounce">
+            Code / 404
+          </div>
+        </div>
+
+        {/* Error Content */}
+        <div className="space-y-6 max-w-lg">
+          <h1 className="text-5xl md:text-7xl font-black text-gray-900 uppercase tracking-tighter italic">
+            Protocol <br /> <span className="text-gray-300">Conflict.</span>
+          </h1>
           
-          <div className="max-w-md mx-auto">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-secondary-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <input
-                type="text"
-                className="block w-full pl-10 pr-3 py-3 border border-border-gray rounded-lg leading-5 bg-white placeholder-secondary-gray focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-primary-blue focus:border-primary-blue"
-                placeholder="Search for laptops..."
-              />
+          <div className="p-8 bg-gray-50 rounded-[40px] border border-gray-100 space-y-4">
+            <div className="flex items-center gap-3 justify-center text-gray-400">
+               <Terminal size={14} />
+               <span className="text-[10px] font-black uppercase tracking-[0.3em]">System Diagnostics</span>
             </div>
+            <p className="text-sm font-medium text-gray-500 leading-relaxed tracking-tight">
+              The hardware identifier or transmission path you requested does not exist within the current inventory matrix. 
+              Synchronization failed.
+            </p>
+          </div>
+
+          <div className="pt-8">
+            <Link 
+              to="/" 
+              className="inline-flex items-center gap-4 px-12 py-6 bg-black text-white font-black uppercase text-xs tracking-[0.3em] rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-gray-200"
+            >
+              <ArrowLeft size={16} />
+              Re-Initiate Navigation
+            </Link>
           </div>
         </div>
-        
-        <div className="mt-12">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">You might be interested in:</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link to="/?condition=NEW" className="block p-4 bg-white border border-border-gray rounded-lg hover:shadow-medium transition-shadow">
-              <h4 className="font-medium text-gray-900 mb-2">New Laptops</h4>
-              <p className="text-sm text-secondary-gray">Latest models with full warranty</p>
-            </Link>
-            <Link to="/?condition=UK_USED" className="block p-4 bg-white border border-border-gray rounded-lg hover:shadow-medium transition-shadow">
-              <h4 className="font-medium text-gray-900 mb-2">UK Used Laptops</h4>
-              <p className="text-sm text-secondary-gray">Quality refurbished laptops at great prices</p>
-            </Link>
-            <Link to="/?category=gaming" className="block p-4 bg-white border border-border-gray rounded-lg hover:shadow-medium transition-shadow">
-              <h4 className="font-medium text-gray-900 mb-2">Gaming Laptops</h4>
-              <p className="text-sm text-secondary-gray">High-performance laptops for gaming</p>
-            </Link>
-          </div>
+
+        {/* Technical Footer */}
+        <div className="mt-24 text-[10px] font-black uppercase tracking-[0.5em] text-gray-300">
+          Laptop Connect / Internal Error Log / 0x404
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
